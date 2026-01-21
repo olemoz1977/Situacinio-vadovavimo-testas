@@ -1,1 +1,752 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Situacinio Vadovavimo Testas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .question-text {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 10px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        
+        .option label {
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1.5;
+            flex: 1;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .results {
+            display: none;
+            padding: 30px;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .score-bar {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease-out;
+        }
+        
+        .style-distribution {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .style-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .style-item.nukreipimo { border-left-color: #dc3545; }
+        .style-item.itikinimo { border-left-color: #ffc107; }
+        .style-item.dalyvavimo { border-left-color: #28a745; }
+        .style-item.delegavimo { border-left-color: #007bff; }
+        
+        .recommendations {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .recommendations h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .recommendations ul {
+            padding-left: 20px;
+        }
+        
+        .recommendations li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .button-group {
+                display: none;
+            }
+            
+            .content {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Situacinio Vadovavimo Modelio Testas</h1>
+            <p>Efektyvumo ir Lankstumo Vertinimas</p>
+        </div>
+        
+        <div class="content" id="test-content">
+            <div id="questions-container"></div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calculateResults()">Gauti Rezultatus</button>
+                <button class="btn btn-secondary" onclick="resetTest()">Pradėti iš naujo</button>
+            </div>
+        </div>
+        
+        <div class="results" id="results"></div>
+    </div>
 
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "Jūs prašote naujo darbuotojo paruošti kompiuterinės įrangos pirkimo pasiūlymą. Jam reikės plačiau pasidomėti apie kompiuterius ir nuspręsti dėl kainų ir galimybių. Darbuotojas jaučia, jog šis darbas apkraus ir taip pilną jo dienotvarkę. Jūs...",
+                options: [
+                    { text: "Pasakysite kada norite matyti pasiūlymą ir paaiškinsite, kas turėtų jame atsispindėti. Aptarsite žingsnius, kurių turi būti laikomasi, norint daugiau sužinoti apie kompiuterius. Nustatysite kasdieninių susitikimų laiką tam, kad pastoviai būtumėte įvykių eigoje.", style: "Nukreipimo", value: "A", correct: "Itikinimo" },
+                    { text: "Paprašysite paruošti pasiūlymą ir aptarsite jo svarbą. Paklausite kada jis galėtų pristatyti rezultatus. Suteiksite jam visus reikalingus resursus. Paprašysite periodiškai informuoti Jus apie projekto eigą.", style: "Dalyvavimo", value: "B", correct: "Itikinimo" },
+                    { text: "Pasakysite jam, kada jūs norite matyti rezultatą ir aptarsite jo svarbą. Paaiškinsite, ką jūs norite matyti ataskaitoje. Išdėstysite darbuotojui, kokius etapus jis turi atlikti, kad sužinotų daugiau apie įrangą. Išklausysite jo pamąstymus, o geras idėjas kai reikės paskatinsite. Nustatysite kas savaitinių susitikimų laiką pokalbiui apie projekto eigą.", style: "Itikinimo", value: "C", correct: "Itikinimo" },
+                    { text: "Paprašysite paruošti pasiūlymą ir aptarsite jo svarbą. Kartu paanalizuosite galimas kliūtis ir strategijas joms įveikti. Paprašysite darbuotojo, kad jis nuspręstų, kada projektas turi būti baigtas ir kaip dažnai jums reikėtų susitikti dėl galimų klausimų.", style: "Delegavimo", value: "D", correct: "Itikinimo" }
+                ]
+            },
+            {
+                id: 2,
+                text: "Jūsų darbo grupė intensyviai dirba prie regiono veiklos ataskaitos. Į grupę įsijungia naujas narys. Jis turi pateikti išlaidų ataskaitą, bet jis nieko nežino apie jos reikalavimus bei pildymą. Naujasis komandos narys dega noru sužinoti daugiau apie savo vietą grupėje. Jūs...",
+                options: [
+                    { text: "Tiksliai pasakysite jam, ko iš jo yra reikalaujama. Išsamiai paaiškinsite kaip pildyti ataskaitą, apibrėšite reikalavimus. Pristatysite naują komandos narį kitiems grupėje dirbantiems žmonėms. Numatysite keletą susitikimų su juo savaitės eigoje tam, kad patikrintumėte kaip sekasi ir prireikus pakoreguotumėte.", style: "Nukreipimo", value: "A", correct: "Nukreipimo" },
+                    { text: "Paklausite ar kažkur galėtumėte jam padėti. Pristatysite naują narį kitiems grupėje dirbantiems žmonėms. Išklausysite jo minčių kaip paspartinti procesą. Susitiksite su nauju grupės nariu savaitės eigoje, kad pažiūrėtumėte, kaip jam sekasi.", style: "Dalyvavimo", value: "B", correct: "Nukreipimo" },
+                    { text: "Išsamiai paaiškinsite kaip užpildyti ataskaitą ir apibrėšite reikalavimus. Išklausysite jo siūlymų šiuo klausimu. Pristatysite naują narį kitiems grupėje dirbantiems žmonėms. Savaitės eigoje dažnai su juo susitiksite tam, kad matytumėte kaip viskas vyksta. Jei reikės pagalbos, padėsite.", style: "Itikinimo", value: "C", correct: "Nukreipimo" },
+                    { text: "Pasveikinsite ir pristatysite naują narį kitiems grupėje dirbantiems žmonėms, kurie galėtų jam padėti. Pasakysite, kad kreiptųsi jei kils problemų.", style: "Delegavimo", value: "D", correct: "Nukreipimo" }
+                ]
+            },
+            {
+                id: 3,
+                text: "Jūs pastebėjote, kad vieno darbuotojo veikla ir rezultatai suprastėjo. Jis demonstruoja, kad jam 'vienodai rodo'. Tik jūsų pastovus stūmimas judina reikalus. Jūs įtariate, jog jam stinga patirties, kad užbaigtų šią itin svarbią užduotį, kurią jūs jam paskyrėte. Jūs...",
+                options: [
+                    { text: "Įvardinsite žingsnius, kuriuos darbuotojas turi padaryti ir kokių rezultatų jūs tikitės. Aiškiai apibrėšite laiko limitą ir atsiskaitomybę. Dažnai tikrinsite ar užduotis vykdoma.", style: "Nukreipimo", value: "A", correct: "Nukreipimo" },
+                    { text: "Įvardinsite žingsnius, kuriuos darbuotojas turi padaryti ir apibrėšite kokių rezultatų jūs tikitės. Pasidomėsite jo pasiūlymais ir jei jie tinkami, skatinsite juos įgyvendinti. Paprašysite, kad jis išsakytų savo nuomonę apie užduotį. Patikrinsite, kad viskas eitųsi kaip planuota.", style: "Itikinimo", value: "B", correct: "Nukreipimo" },
+                    { text: "Įtrauksite jį į problemos, susijusios su šia užduotimi, sprendimą. Pasiūlysite savo pagalbą ir padrąsinsite pasinaudoti savo idėjomis kaip įvykdyti užduotį. Periodiškai tikrinsite ar viskas eina gera linkme.", style: "Dalyvavimo", value: "C", correct: "Nukreipimo" },
+                    { text: "Leisite jam suprasti, kad ši užduotis yra labai svarbi. Paprašysite jo nuspręsti, kada ji turi būti atlikta. Taip pat paprašysite atsiųsti galutinio rezultato kopiją. Patikinsite, kad iškilus problemoms jis gali kreiptis pagalbos.", style: "Delegavimo", value: "D", correct: "Nukreipimo" }
+                ]
+            },
+            {
+                id: 4,
+                text: "Kompanijoje įvyko restruktūrizacija, todėl pasikeitė jūsų darbo grupės sudėtis. Veiklos rezultatai nukrito. Darbuotojai nieko nespėja laiku, todėl jūsų vadovas labai susirūpinęs. Grupės nariai nori greičiau pagerinti rezultatus, bet tam reikia žinių ir įgūdžių. Jūs...",
+                options: [
+                    { text: "Klausite darbuotojų, kokių mokymų ir kokio ugdymo jiems reiktų veiklai pagerint. Suteiksite reikalingus resursus. Patikrinsite, kad esate pasiruošęs padėti ir paprašysite informuoti kaip sekasi.", style: "Delegavimo", value: "A", correct: "Itikinimo" },
+                    { text: "Pristatysite savo planą, kaip būtų galima išspręsti problemą. Paklausite darbuotojų nuomonės ir minčių, jei tai įmanoma, įtrauksite jas į planą. Paaiškinsite, kodėl planas būtent toks. Dažnai tikrinsite, ar viskas vyksta pagal planą.", style: "Itikinimo", value: "B", correct: "Itikinimo" },
+                    { text: "Nurodysite žingsnius veiklos gerinimui. Tikitės, kad jie bus įvykdyti. Būsite labai reiklus laiko limitams. Įvardinsite įgūdžius, kurie būtinai turi būti ugdomi. Aktyviai kontroliuosite plano vykdymą.", style: "Nukreipimo", value: "C", correct: "Itikinimo" },
+                    { text: "Padėsite jiems sukurti veiklos gerinimo planą. Paskatinsite juos mąstyti kūrybiškai. Palaikysite jų planą ir periodiškai tikrinsite rezultatus.", style: "Dalyvavimo", value: "D", correct: "Itikinimo" }
+                ]
+            },
+            {
+                id: 5,
+                text: "Dėl biudžeto mažinimo atėjo metas susitelkti. Jūs kreipėtės į labai patyrusį skyriaus darbuotoją su prašymu padėti motyvuoti žmones. Šis darbuotojas yra dirbęs visose skyriaus veiklos srityse. Anksčiau jis nuolat aktyviai padėdavo. Jūs jaučiate, jog darbuotojas šią užduotį gali įvykdyti, tačiau atrodo, kad jis yra abejingas užduočiai. Jūs...",
+                options: [
+                    { text: "Patikinsite jį, kad jis gali tai padaryti. Pasakysite, kaip jis turėtų atlikti šią užduotį. Klausite jo idėjų ir jei jos tinkamos, įtrauksite į veiksmų planą. Tačiau, pabrėšite, kad būtina laikytis bendrai aptartos strategijos. Dažnai tikrinsite, ar viskas einasi gerai.", style: "Itikinimo", value: "A", correct: "Dalyvavimo" },
+                    { text: "Patikinsite jį, kad jis gali tai padaryti. Paprašysite vykdyti projektą taip, kaip jam tai atrodys geriausia. Pats būsite kantrus ir pasiruošęs padėti. Paprašysite pastoviai informuoti apie eigą.", style: "Delegavimo", value: "B", correct: "Dalyvavimo" },
+                    { text: "Patikinsite jį, kad jis gali tai padaryti. Paprašysite, kad įvardintų geriausius būdus užduočiai atlikti. Padėsite jam kurti alternatyvius užduoties vykdymo kelius ir paskatinsite juos naudoti. Susitarsite dėl dažnų susitikimų patikrinimui.", style: "Dalyvavimo", value: "C", correct: "Dalyvavimo" },
+                    { text: "Patikinsite jį, kad jis gali tai padaryti. Pristatysite bendrą planą ir įvardinsite, ką jis turėtų padaryti. Dažnai tikrinsite, ar darbuotojas laikosi suplanuoto etapiškumo.", style: "Nukreipimo", value: "D", correct: "Dalyvavimo" }
+                ]
+            },
+            {
+                id: 6,
+                text: "Jau antrą kartą šį mėnesį jums kyla problemos dėl vieno darbuotojo. Jis neužpildo savaitinių ataskaitų ar vėluoja tai padaryti. Anksčiau tokių dalykų nebūdavo, ataskaitos buvo tvarkingos ir savalaikės. Tai pirmas kartas, kai jums tenka kalbėtis šiuo darbuotoju tokia tema. Jūs...",
+                options: [
+                    { text: "Pasakysite jam, kad reikia pagerinti darbą su ataskaitomis ir laikytis laiko limitų. Pažymėsite, kas buvo netvarkinga. Įsitikinsite, kad jis suprato ko iš jo tikimasi ir kaip turi būti pildomas kiekvienas ataskaitos skyrius. Stebėsite jo veiklą toliau.", style: "Nukreipimo", value: "A", correct: "Dalyvavimo" },
+                    { text: "Paprašysite pildyti ataskaitas taip pat, kaip jis tai darydavo anksčiau. Stebėsite veiklą toliau.", style: "Delegavimo", value: "B", correct: "Dalyvavimo" },
+                    { text: "Su darbuotoju aptarsite laiko limitus ir ataskaitų pildymo standartus. Išklausysite jo dvejones, tačiau įsitikinsite, kad jis suprato ko iš jo tikimasi. Peržvelgsite kiekvieną ataskaitos skyrių ir atsakysite iškilusius klausimus. Naudosite jo idėjas, jei tik įmanoma. Stebėsite veiklą toliau.", style: "Itikinimo", value: "C", correct: "Dalyvavimo" },
+                    { text: "Paklausite jo, kodėl ataskaitos netvarkingos. Išklausysite jo dvejonių ir darysite viską, kad jis suprastų, kaip svarbu savalaikumas ir tvarka. Stebėsite veiklą toliau.", style: "Dalyvavimo", value: "D", correct: "Dalyvavimo" }
+                ]
+            },
+            {
+                id: 7,
+                text: "Vienam iš labiausiai patyrusių darbuotojų pavedėte pradėti naują projektą. Savo ankstesnėje veikloje jis pasiekė įspūdingų rezultatų. Projektas, kurį jūs pavedėte darbuotojui yra labai svarbus komandos ateičiai. Darbuotojas labai patenkintas nauja užduotimi, tačiau nežino nuo ko pradėti. Jam trūksta informacijos apie patį projektą. Jūs...",
+                options: [
+                    { text: "Paaiškinsite, kodėl jūs manote, kad jis turi įgūdžių užduočiai atlikti. Paklausite, kokius keblumus jis mato ir padėsite jam sugalvoti alternatyvius sprendimus. Dažnai kontaktuosite, kad palaikytumėte jį.", style: "Dalyvavimo", value: "A", correct: "Nukreipimo" },
+                    { text: "Išaiškinsite jam, kaip jis turi valdyti projektą. Įvardinsite veiksmus, kurie yra būtini užduoties atlikimui. Aktyviai stebėsite kas vyksta.", style: "Nukreipimo", value: "B", correct: "Nukreipimo" },
+                    { text: "Paprašysite jo per dvi savaites paruošti projekto planą. Duosite pakankamai laiko pasiruošti ir pradėti veiklą. Periodiškai pasiūlysite pagalbą.", style: "Delegavimo", value: "C", correct: "Nukreipimo" },
+                    { text: "Paaiškinsite, kaip projektas turi būti kuriamas, kreipsite dėmesį jo mintis ir idėjas. Įtrauksite jo pasiūlymus į planą, bet įsitikinsite, kad laikomasi bendros linijos. Reguliariai tikrinsite, kaip sekasi.", style: "Itikinimo", value: "D", correct: "Nukreipimo" }
+                ]
+            },
+            {
+                id: 8,
+                text: "Vienas iš jūsų darbuotojų išsako, kad nelabai spės atlikti jam pavesto darbo iki laiko limito pabaigos. Jis yra labai kompetentingas ir jūs žinote, kad turi pakankamai įgūdžių užduočiai įvykdyti. Laiko limitai tikrai spaudžia. Jūs...",
+                options: [
+                    { text: "Parodysite jam savo susirūpinimą dėl laiko limitų nesilaikymo. Padėsite rasti alternatyvius sprendimo būdus ir paskatinsite jį panaudoti tas idėjas. Periodiškai susitiksite su juo, kai reikės pagalbos.", style: "Dalyvavimo", value: "A", correct: "Dalyvavimo" },
+                    { text: "Diskutuosite su juo apie laiko limitų svarbą. Sukursite jam veiksmų planą, stebėsite jo reakciją ir reikalui esant įtrauksite jo mintis į planą. Įsitikinsite, kad laikomasi bendros linijos. Reguliariai susitiksite su juo patikrinti, kaip viskas einasi.", style: "Itikinimo", value: "B", correct: "Dalyvavimo" },
+                    { text: "Įvardinsite žingsnius, kuriuos jis turi atlikti. Paaiškinsite priežastis, kodėl užduotis turi būti atlikta laiku. Aktyviai stebėsite veiklą toliau.", style: "Nukreipimo", value: "C", correct: "Dalyvavimo" },
+                    { text: "Paklausite jo, ar yra kokių problemų, bet leisite jam pačiam jas spręsti. Nespausdami priminsite jam apie laiko limitus. Paprašysite ateiti po kurio laiko, kai darbas eis į pabaigą.", style: "Delegavimo", value: "D", correct: "Dalyvavimo" }
+                ]
+            },
+            {
+                id: 9,
+                text: "Padidėjus klientų skaičiui, į jus kreipėsi darbuotojai su pasiūlymu padaryti pakeitimus veiklos plane. Jums šis pasiūlymas patiko. Darbuotojai yra kompetentingi, puikiai dirba komandoje. Jūs...",
+                options: [
+                    { text: "Padėsite jiems paruošti ir išplėsti alternatyvų veiklos planą. Būsite pasiruošęs dalyvauti ir vesti darbuotojų grupės diskusiją. Palaikysite planą, kurį jie vysto. Patikrinsite, kaip jie įgyvendina naują veiklos planą.", style: "Dalyvavimo", value: "A", correct: "Delegavimo" },
+                    { text: "Sukursite veiksmų planą pats. Paaiškinsite plano esmę ir sudėtį. Išklausysite jų reakcijas, idėjas ir rekomendacijas. Jei jos tinkamos, įtrauksite jas į planą. Patikrinsite, kaip laikomasi plano.", style: "Itikinimo", value: "B", correct: "Delegavimo" },
+                    { text: "Leisite darbuotojams peržiūrėti savo veiklos planus kiekvienam atskirai. Leisite jiems įgyvendinti planus po to, kai jūs juos patvirtinsite. Po mėnesio patikrinsite rezultatus, pasiektus dirbant pagal naują veiklos planą.", style: "Delegavimo", value: "C", correct: "Delegavimo" },
+                    { text: "Pats sukursite veiksmų planą. Paaiškinsite, kaip tai turi veikti ir atsakysite į visus darbuotojų klausimus. Dažnai tikrinsite, ar laikomasi naujo veiksmų plano.", style: "Nukreipimo", value: "D", correct: "Delegavimo" }
+                ]
+            },
+            {
+                id: 10,
+                text: "Organizacijoje pasikeitimai. Jūs paskirtas grupės vadovu. Grupėje yra šeši žmonės. Grupės rezultatai per paskutinius tris mėnesius pastoviai krito. Panašu, kad darbuotojai neturi pakankamai žinių ir įgūdžių iškeltiems uždaviniams įvykdyti. Dėl pasikeitimų organizacijoje kolegų požiūris į veiklą blogėja. Grupės susirinkime Jūs...",
+                options: [
+                    { text: "Parodote jiems paskutinių trijų mėnesių kreives. Paprašote jų nuspręsti, ką jie darys, kad to nebebūtų ir nustatote laiko limitus sprendimų įgyvendinimui. Tikrinate jų veiklą ir rezultatus.", style: "Delegavimo", value: "A", correct: "Itikinimo" },
+                    { text: "Parodote jiems paskutinių trijų mėnesių kreives. Pristatote veiksmų planą, pagal kurį jie turės dirbti. Suteikiate jiems konstruktyvų atgalinį ryšį, kaip pagerinti veiklą ir rezultatus. Aktyviai tikrinate rezultatus ir veiklą.", style: "Nukreipimo", value: "B", correct: "Itikinimo" },
+                    { text: "Parodote jiems paskutinių trijų mėnesių kreives. Įvardinate žingsnius, kuriuos jie turi atlikti. Paaiškinate kodėl tą reikėtų daryti ir prašote atgalinio ryšio. Jei įmanoma, naudojate jų idėjas, prieš tai įsitikinus, kad laikomasi bendrų standartų. Reguliariai stebite veiklą.", style: "Itikinimo", value: "C", correct: "Itikinimo" },
+                    { text: "Parodote jiems paskutinių trijų mėnesių kreives. Paklausite, ką jie mano, kodėl rezultatai krinta. Išklausote jų samprotavimų, idėjų, susirūpinimo. Padėdate jiems sukurti jų pačių veiklos gerinimo planą. Periodiškai tikrinsite rezultatus.", style: "Dalyvavimo", value: "D", correct: "Itikinimo" }
+                ]
+            },
+            {
+                id: 11,
+                text: "Per paskutinius metus vieno iš jūsų skyriaus darbuotojų rezultatai pastoviai augo. Jis pozityviai vertina ateinančių metų galimybes. Biudžetas, skyriaus planai ir tikslai, lyginant su praėjusiais metais, keisis nežymiai. Susitikimo su juo tikslas - aptarti sekančių metų tikslus ir planus. Susitikimo metu Jūs...",
+                options: [
+                    { text: "Paprašote, kad jis pateiktų planuojamus savo tikslus ir veiksmų planą jūsų patvirtinimui. Pasakote, kad paskambinsite jam, jei jums kils kokių nors klausimų.", style: "Delegavimo", value: "A", correct: "Delegavimo" },
+                    { text: "Paruošite lapą su tikslais ir veiksmų planu, kuriuos, jūsų manymu darbuotojas pajėgus pasiekti ateinančiais metais. Nusiųsite jam šį sąrašą ir susitiksite su juo tam, kad įsitikintumėte, jog jis neturi jokių klausimų.", style: "Nukreipimo", value: "B", correct: "Delegavimo" },
+                    { text: "Paruošite lapą su tikslais ir veiksmų planu, kuriuos, jūsų manymu darbuotojas pajėgus pasiekti ateinančiais metais. Susitiksite su juo aptarti jo požiūrio ir pasiūlymų. Pakeisite planą atsižvelgdamas į jo rekomendacijas, bet galutinį sprendimą padarysite pats.", style: "Itikinimo", value: "C", correct: "Delegavimo" },
+                    { text: "Paprašote, kad jis atsiųstų jums savo tikslus ir veiksmų planą kitiems metams. Susitikimo metu apžvelgiate tikslus ir planus kartu su darbuotoju. Išklausote jo pasiūlymų ir kartu aptariate alternatyvas. Leisite jam priimti galutinį sprendimą.", style: "Dalyvavimo", value: "D", correct: "Delegavimo" }
+                ]
+            },
+            {
+                id: 12,
+                text: "Per paskutinius du metus jūsų skyrius pasiekė puikių rezultatų. Tačiau, visai neseniai įvyko trys dideli pasikeitimai, neigiamai paveikę rezultatus. Pasikeitimai nepriklausė nuo grupės veiklos. Veiklos rezultatai ir moralė smarkiai krito, todėl jūsų vadovas sunerimęs. Skyriaus susirinkime Jūs...",
+                options: [
+                    { text: "Aptarsite negatyvius pasikeitimus. Pasakysite, kad norite, jog skyrius dirbtų pagal schemą, kurią jūs pateikiate. Tikslas - pagerinti rezultatus. Aktyviai ir pastoviai stebite veiklą.", style: "Nukreipimo", value: "A", correct: "Dalyvavimo" },
+                    { text: "Klausite skyriaus darbuotojų, kaip jie jaučiasi dėl įvykių. Išklausysite jų nuogąstavimus, mintis, padrąsinsite juos. Paskatinsite sukurti veiklos gerinimo planą. Periodiškai tikrinsite veiklą ir rezultatus.", style: "Dalyvavimo", value: "B", correct: "Dalyvavimo" },
+                    { text: "Aptarsite negatyvius pasikeitimus. Aiškiai nurodysite, kokius žingsnius skyriaus darbuotojai turi atlikti, kad pagerėtų rezultatai. Išklausote jų idėjas ir, jei tai įmanoma, įtraukiate jas į planą. Susumuojate rezultatus. Skatinate juos nepasiduoti, siekti tikslų. Dažnai tikrinate veiklą ir rezultatus.", style: "Itikinimo", value: "C", correct: "Dalyvavimo" },
+                    { text: "Aptariate susidariusias kliūtis ir situaciją, nespausdami skyriaus darbuotojų. Paprašote, kad jie nustatytų kada rezultatas pagerės ir palaikytų vieni kitus. Stebite veiklą ir rezultatus.", style: "Delegavimo", value: "D", correct: "Dalyvavimo" }
+                ]
+            },
+            {
+                id: 13,
+                text: "Jums priskyrė naują darbuotoją, kuris atliks svarbų darbą. Darbuotojas nepatyręs, tačiau yra entuziastingai nusiteikęs, pasitikintis savimi. Jūs...",
+                options: [
+                    { text: "Duosite jam laiko, kad susipažintų, ko ir kaip reikia darbui atlikti. Paaiškinsite, kodėl šis darbas yra svarbus. Pasakysite, kad sakytų, jei reikės pagalbos. Stebėsite jo veiklą.", style: "Delegavimo", value: "A", correct: "Nukreipimo" },
+                    { text: "Įvardinsite kokių rezultatų tikitės, informuosite kada darbas turi būti baigtas. Aiškiai nurodysite kelius, kaip pasiekti rezultatą. Parodysite jam, kaip jo darbas turi būti atliekamas. Aktyviai stebėsite veiklą.", style: "Nukreipimo", value: "B", correct: "Nukreipimo" },
+                    { text: "Aptarsite kokių rezultatų tikitės, informuosite iki kada darbas turi būti atliktas. Aiškiai nurodysite kelius, kaip pasiekti rezultatą. Paaiškinate, kodėl šie darbo būdai yra reikalingi ir išklausysite jo nuomonę apie tai. Išklausius jo idėjų, jei įmanoma, įtrauksite jas į planą. Įsitikinsite, kad laikomasi bendros strategijos. Dažnai tikrinsite rezultatus.", style: "Itikinimo", value: "C", correct: "Nukreipimo" },
+                    { text: "Klausite apie jo planus darbo atžvilgiu. Padėsite jam išsiaiškinti galimas problemas ir jų sprendimo būdus. Paskatinsite jį paruošti planą. Būsite pasiruošęs atsakyti į klausimus. Periodiškai tikrinsite veiklą.", style: "Dalyvavimo", value: "D", correct: "Nukreipimo" }
+                ]
+            },
+            {
+                id: 14,
+                text: "Jūsų vadovas informavo, kad jūsų grupei planas padidintas 7%. Jūs žinote, kad tai įvykdoma, tačiau reikės tiesioginio jūsų paties dalyvavimo. Kad galėtumėte užsiimti tuo, turite perskirstyti darbus ir naujos kainų kontrolės sistemos kūrimą perduoti vienam iš savo darbuotojų. Asmuo, kuriam galvojate tai pavesti, turi praktikos darbe su kainų kontrolės sistemomis, tačiau nepasitiki savo jėgomis. Jūs...",
+                options: [
+                    { text: "Skirsite užduotį tam darbuotojui ir išklausysite jo komentarus bei nerimavimus. Paaiškinsite, kodėl jūsų nuomone jis tinkamas šiai užduočiai vykdyti. Palaikysite jį ir užtikrinsite reikiamus resursus. Padrąsinsite naudoti jam priimtinus alternatyvius būdus problemai spręsti. Periodiškai tikrinsite eigą.", style: "Dalyvavimo", value: "A", correct: "Dalyvavimo" },
+                    { text: "Skirsite užduotį tam darbuotojui ir išklausysite jo komentarus bei nerimavimus. Aptarsite užduoties vykdymo etapus. Išklausysite jo idėjas ir pasiūlymus. Po bendrų idėjų sukūrimo, įsitikinsite, kad veikla vyksta pagal bendrą strategiją. Dažnai tikrinsite veiklos rezultatus.", style: "Itikinimo", value: "B", correct: "Dalyvavimo" },
+                    { text: "Skirsite užduotį tam darbuotojui. Išklausysite jo idėjas ir nuogąstavimus, tačiau problemas spręsti leisite pačiam. Duosite laiko apsiprasti su paskyrimu, apie rezultatus klausite praėjus kiek daugiau laiko. Paprašysite, kad dažniau kontaktuotų su jumis.", style: "Delegavimo", value: "C", correct: "Dalyvavimo" },
+                    { text: "Skirsite užduotį tam darbuotojui. Išklausysite nuogąstavimus ir garantuosite pagalbą nurodydami, kaip darbas turėtų būti atliktas. Būtinai pabrėšite žingsnius, kas turi būti padaryta. Aktyviai stebite veiklą ir rezultatus.", style: "Nukreipimo", value: "D", correct: "Dalyvavimo" }
+                ]
+            },
+            {
+                id: 15,
+                text: "Jūsų vadovas kreipėsi į jus su prašymu paskirti kažką iš skyriaus į organizacijos komitetą. Komiteto tikslas paruošti rekomendacijas naujam motyvacijos planui. Jūs pasirinkote vieną iš sėkmingiausių darbuotojų, kuris gerai žino, ką jo kolegos mano apie esamą motyvacijos sistemą. Anksčiau darbuotojas sėkmingai dalyvavo panašiuose projektuose. Jis nori šio paskyrimo. Jūs...",
+                options: [
+                    { text: "Skirsite darbuotojui šią veiklą ir pasakysite jam, kaip jis turėtų pristatyti kolegų požiūrį. Priminsite, kad dviejų dienų laikotarpyje po komiteto susirinkimų jis turi atsiskaityti jums.", style: "Nukreipimo", value: "A", correct: "Delegavimo" },
+                    { text: "Paprašysite jo dalyvauti komiteto veikloje. Padėsite jam sukurti požiūrį, kurį jis pristatys komitete. Periodiškai susitiksite aptarimui.", style: "Dalyvavimo", value: "B", correct: "Delegavimo" },
+                    { text: "Skirsite darbuotojui šią veiklą. Aptarsite kartu, ką jis turėtų daryti, kad komitetas priimtų kolegų požiūrį. Išklausysite jo idėjas, bet užtikrinsite, kad bus laikomasi bendrai priimtos strategijos. Paprašysite atsiskaityti po kiekvieno komiteto susirinkimo.", style: "Itikinimo", value: "C", correct: "Delegavimo" },
+                    { text: "Skirsite darbuotojui šią veiklą. Paprašysite informuoti apie komiteto veiklos eigą, jei bus kažkas naujo.", style: "Delegavimo", value: "D", correct: "Delegavimo" }
+                ]
+            },
+            {
+                id: 16,
+                text: "Dėl ligos jums teko praleisti du jūsų vadovaujamo komiteto susirinkimus. Dalyvaudami susirinkime jūs matote, kad komitetas veikia darniai, sėkmingai einama užduoties įvykdymo linkme. Visi grupės nariai atėjo pasiruošę, aktyviai dalyvauja, entuziastingai nusiteikę. Jūs abejojate, koks jūsų vaidmuo. Jūs...",
+                options: [
+                    { text: "Padėkosite grupės nariams už jų darbą iki esamo momento. Leisite grupei tęsti tą darbą, kurį grupė darė per tas dvi savaites.", style: "Delegavimo", value: "A", correct: "Delegavimo" },
+                    { text: "Padėkosite grupės nariams už jų darbą iki esamo momento. Pristatysite sekančio susirinkimo dienotvarkę, nurodysite grupės veiksmų seką šiai savaitei.", style: "Nukreipimo", value: "B", correct: "Delegavimo" },
+                    { text: "Padėkosite grupės nariams už jų darbą iki esamo momento. Apibendrinsite idėjas ir pasiūlymus. Visiems grupės nariams leisite pasijusti svarbiais.", style: "Dalyvavimo", value: "C", correct: "Delegavimo" },
+                    { text: "Padėkosite grupės nariams už jų darbą iki esamo momento. Pristatysite sekančio susirinkimo dienotvarkę, prašysite grupės narių indėlio ir idėjų.", style: "Itikinimo", value: "D", correct: "Delegavimo" }
+                ]
+            },
+            {
+                id: 17,
+                text: "Jūsų grupės darbuotojai yra labai kompetentingi ir puikiai dirba savarankiškai. Jų entuziazmas didelis, nes rezultatai tikrai geri. Šiuo metu turite nustatyti grupei kitų metų tikslus. Grupės susitikimo metu Jūs...",
+                options: [
+                    { text: "Padėkosite grupei už praėjusių metų rezultatus. Įtrauksite grupės narius į problemų sprendimą ir tikslų kitiems metams iškėlimo procesą. Paskatinsite juos būti išradingesniais ir išnaudoti alternatyvas.", style: "Dalyvavimo", value: "A", correct: "Delegavimo" },
+                    { text: "Padėkosite grupei už praėjusių metų rezultatus. Pristatysite kitų metų tikslus, akcentuosite, ką reikia padaryti, kad tikslai būtų pasiekti.", style: "Nukreipimo", value: "B", correct: "Delegavimo" },
+                    { text: "Padėkosite grupei už praėjusių metų rezultatus. Paprašysite jų numatyti ir pristatyti kitų metų planus ir kokiais veiksmais jų bus pasiekta. Būsite pasiruošęs padėti, jei to reikės.", style: "Delegavimo", value: "C", correct: "Delegavimo" },
+                    { text: "Padėkosite grupei už praėjusių metų rezultatus. Pristatysite kitų metų tikslus, akcentuosite, ką reikia padaryti, kad tikslai būtų pasiekti. Paprašysite grupės narių pasiūlymų ir idėjų, jei bus įmanoma, įtrauksite juos į planą.", style: "Itikinimo", value: "D", correct: "Delegavimo" }
+                ]
+            },
+            {
+                id: 18,
+                text: "Jūs ir jūsų vadovas žino, kad siekiant pagerinti ilgalaikį jūsų grupės veiklos produktyvumą, reikalingos naujos veiklos procedūros. Grupės nariai trokšta kažką keisti, bet dėl žinių ir įgūdžių stygiaus nesupranta kaip sistema turi veikti. Jūs...",
+                options: [
+                    { text: "Pristatysite naujas procedūras ir planą, kaip jos bus įgyvendintos. Įtrauksite grupę į diskusiją apie alternatyvas. Kai bus įmanoma, panaudosite jų indėlį ir pasiūlymus, tačiau užtikrinsite, kad bus laikomasi bendros strategijos. Dažnai patikrinsite, ar laikomasi naujų procedūrų ir stebėsite jų rezultatus.", style: "Itikinimo", value: "A", correct: "Itikinimo" },
+                    { text: "Pristatysite ir pademonstruosite naujas procedūras. Instruktuosite grupę apie tai, kaip jas naudoti ir aktyviai tikrinsite, kaip jų laikomasi.", style: "Nukreipimo", value: "B", correct: "Itikinimo" },
+                    { text: "Įtrauksite grupę į diskusiją apie procedūras. Skatinsite aktyviai ir kūrybingai prisidėti prie procedūrų kūrimo. Padėsite nagrinėti galimas alternatyvas. Periodiškai tikrinsite, ar naudojamos procedūros, seksite rezultatus.", style: "Dalyvavimo", value: "C", correct: "Itikinimo" },
+                    { text: "Paprašysite grupės narių sukurti ir įgyvendinti naujas procedūras. Atsakysite į klausimus, bet visą atsakomybę paliksite grupės nariams. Periodiškai stebėsite veiklą ir rezultatus.", style: "Delegavimo", value: "D", correct: "Itikinimo" }
+                ]
+            },
+            {
+                id: 19,
+                text: "Jūs neseniai paskirtas departamento vadovu. Prieš jums ateinant į šią poziciją, departamento veikloje ir rezultatuose matėsi kritimas. Neseniai buvo įdiegta tam tikra technologinė naujovė ir darbuotojai dar neįgijo pakankamai žinių ir įgūdžių. Blogiausia, kad jie nemotyvuoti mokytis. Departamento susirinkimo metu Jūs...",
+                options: [
+                    { text: "Aptarsite veiklos trikdžius ir rezultatų kritimo priežastis. Išklausysite jų problemų. Klausite kaip pagerinti veiklą. Išreikšite savo tikėjimą jų strategija. Akcentuosite praeities pastangas, bet periodiškai tikrinsite veiklą ir tai kaip jie laikosi strategijos.", style: "Dalyvavimo", value: "A", correct: "Nukreipimo" },
+                    { text: "Pristatysite būtinus koreguojamuosius veiksmus ir pabrėšite, kad norite, jog būtų daroma būtent taip. Išklausysite siūlomas alternatyvas ir jų idėjas. Koreguosite planą tiek, kiek jums atrodys naudinga, stebėsite, kaip planas įgyvendintas. Dažnai tikrinsite veiklą.", style: "Itikinimo", value: "B", correct: "Nukreipimo" },
+                    { text: "Pasakysite jiems apie veiklos sutrikimus. Paprašysite išanalizuoti priežastis ir pateikti jums veiksmų planą patvirtinimui. Nustatysite laiko limitą šiam planui. Stebėsite veiksmus ir jų pažangą.", style: "Delegavimo", value: "C", correct: "Nukreipimo" },
+                    { text: "Pristatysite būtinus koreguojamuosius veiksmus ir pabrėšite, kad norite, jog būtų daroma būtent taip. Paskirsite atsakomybes, atsakingus darbuotojus, numatysite standartus. Aktyviai stebėsite veiklą ir pažangą.", style: "Nukreipimo", value: "D", correct: "Nukreipimo" }
+                ]
+            },
+            {
+                id: 20,
+                text: "Jūs pastebėjote, kad viena iš darbuotojų neteisingai pildo ataskaitas. Tai nepatyrusi darbuotoja. Ataskaitos pildomos nepilnai ir netvarkingai. Darbuotoja nesižavi ataskaitomis, mano, kad tai tik laiko švaistymas. Jūs...",
+                options: [
+                    { text: "Pasakysite jai, kad ji pateikia netvarkingas ir nepilnai užpildytas ataskaitas. Aptarsite, kaip ji tai turėtų daryti ir išaiškinsite, kodėl tai yra svarbu. Klausite jos pasiūlymų, bet užtikrinsite, kad turi būti laikomasi tvarkos. Dažnai patikrinsite ataskaitas.", style: "Itikinimo", value: "A", correct: "Itikinimo" },
+                    { text: "Pasakysite jai, kad ji pateikia netvarkingas ir nepilnai užpildytas ataskaitas. Paprašysite, kad ji pateiktų pasiūlymą, kaip problema gali būti išspręsta. Duosite jai daugiau laiko atlikti darbui teisingai. Tikrinsite ataskaitas.", style: "Delegavimo", value: "B", correct: "Itikinimo" },
+                    { text: "Pasakysite jai, kad ji pateikia netvarkingas ir nepilnai užpildytas ataskaitas. Paklausite, ką ji mano daryti toliau. Padėsite jai paruošti veiksmų planą klaidų taisymui. Periodiškai tikrinsite ataskaitas.", style: "Dalyvavimo", value: "C", correct: "Itikinimo" },
+                    { text: "Pasakysite jai, kad ji pateikia netvarkingas ir nepilnai užpildytas ataskaitas. Parodysite jai, kaip pildomos ataskaitos. Įvardinsite, kokius veiksmus ji turi daryti, kad pagerėtų ataskaitų kokybė. Aktyviai tikrinsite ataskaitas.", style: "Nukreipimo", value: "D", correct: "Itikinimo" }
+                ]
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = questions.map(q => `
+                <div class="question">
+                    <div class="question-number">Klausimas ${q.id}/20</div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="options">
+                        ${q.options.map(opt => `
+                            <div class="option">
+                                <input type="radio" name="q${q.id}" id="q${q.id}${opt.value}" value="${opt.value}" data-style="${opt.style}">
+                                <label for="q${q.id}${opt.value}">${opt.text}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function calculateResults() {
+            // First, remove any previous highlights
+            document.querySelectorAll('.question').forEach(q => {
+                q.style.border = '4px solid transparent';
+                q.style.borderLeft = '4px solid #667eea';
+            });
+            
+            // Check for unanswered questions
+            let firstUnanswered = null;
+            for (let q of questions) {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (!selected) {
+                    firstUnanswered = q.id;
+                    break;
+                }
+            }
+            
+            if (firstUnanswered) {
+                // Find the question element
+                const questionElements = document.querySelectorAll('.question');
+                const unansweredElement = questionElements[firstUnanswered - 1];
+                
+                // Highlight it
+                unansweredElement.style.border = '4px solid #dc3545';
+                unansweredElement.style.borderLeft = '4px solid #dc3545';
+                unansweredElement.style.background = '#ffe6e6';
+                
+                // Scroll to it smoothly
+                unansweredElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Show alert
+                alert(`Prašome atsakyti į klausimą ${firstUnanswered}!`);
+                
+                // Remove highlight after 3 seconds
+                setTimeout(() => {
+                    unansweredElement.style.border = '4px solid transparent';
+                    unansweredElement.style.borderLeft = '4px solid #667eea';
+                    unansweredElement.style.background = '#f8f9fa';
+                }, 3000);
+                
+                return;
+            }
+            
+            // All questions answered - proceed with calculation
+            const answers = {};
+            const styleCount = { V1: 0, V2: 0, V3: 0, V4: 0 };
+            const effectiveness = { LB: 0, B: 0, G: 0, P: 0 };
+            
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                const selectedOption = q.options.find(opt => opt.value === selected.value);
+                answers[q.id] = {
+                    selected: selectedOption.style,
+                    correct: selectedOption.correct
+                };
+                
+                // Count style usage for flexibility
+                const styleMap = {
+                    'Nukreipimo': 'V1',
+                    'Itikinimo': 'V2',
+                    'Dalyvavimo': 'V3',
+                    'Delegavimo': 'V4'
+                };
+                styleCount[styleMap[selectedOption.style]]++;
+                
+                // Calculate effectiveness
+                if (selectedOption.style === selectedOption.correct) {
+                    effectiveness.P++;
+                } else {
+                    const styles = ['Nukreipimo', 'Itikinimo', 'Dalyvavimo', 'Delegavimo'];
+                    const correctIdx = styles.indexOf(selectedOption.correct);
+                    const selectedIdx = styles.indexOf(selectedOption.style);
+                    const diff = Math.abs(correctIdx - selectedIdx);
+                    
+                    if (diff === 1) effectiveness.G++;
+                    else if (diff === 2) effectiveness.B++;
+                    else effectiveness.LB++;
+                }
+            });
+            
+            // Calculate scores
+            const effectivenessScore = (effectiveness.LB * 1) + (effectiveness.B * 1) + (effectiveness.G * 3) + (effectiveness.P * 4);
+            const flexibility = Math.abs(styleCount.V1 - 5) + Math.abs(styleCount.V2 - 5) + Math.abs(styleCount.V3 - 5) + Math.abs(styleCount.V4 - 5);
+            
+            displayResults(effectivenessScore, flexibility, styleCount, effectiveness);
+        }
+
+        function displayResults(effScore, flexScore, styleCount, effectiveness) {
+            document.getElementById('test-content').style.display = 'none';
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+            
+            const effPercent = ((effScore - 20) / 60) * 100;
+            const effColor = effPercent < 40 ? '#ffc107' : effPercent < 70 ? '#28a745' : '#007bff';
+            
+            let flexLevel, flexColor;
+            if (flexScore === 0) {
+                flexLevel = 'Tobulas balansas';
+                flexColor = '#007bff';
+            } else if (flexScore <= 4) {
+                flexLevel = 'Labai geras lankstumas';
+                flexColor = '#28a745';
+            } else if (flexScore <= 8) {
+                flexLevel = 'Vidutinis lankstumas';
+                flexColor = '#ffc107';
+            } else {
+                flexLevel = 'Žemas lankstumas';
+                flexColor = '#dc3545';
+            }
+            
+            resultsDiv.innerHTML = `
+                <div class="header">
+                    <h1>Jūsų Rezultatai</h1>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">📊 Vadovavimo Efektyvumas</div>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: ${effPercent}%; background: ${effColor};">
+                            ${effScore}/80 (${effPercent.toFixed(1)}%)
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+                        <div style="text-align: center; padding: 10px; background: #fff; border-radius: 5px;">
+                            <div style="font-size: 24px; font-weight: bold; color: #28a745;">${effectiveness.G}</div>
+                            <div style="font-size: 12px; color: #666;">Gerai</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: #fff; border-radius: 5px;">
+                            <div style="font-size: 24px; font-weight: bold; color: #007bff;">${effectiveness.P}</div>
+                            <div style="font-size: 12px; color: #666;">Puikiai</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">🎯 Vadovavimo Stilių Lankstumas</div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="font-size: 48px; font-weight: bold; color: ${flexColor};">${flexScore}</div>
+                        <div style="font-size: 18px; color: #666; margin-top: 10px;">${flexLevel}</div>
+                        <div style="font-size: 14px; color: #999; margin-top: 5px;">Mažesnis balas = geresnis balansas</div>
+                    </div>
+                    
+                    <div class="style-distribution">
+                        <div class="style-item nukreipimo">
+                            <strong>Nukreipimo (S1)</strong><br>
+                            Panaudota: ${styleCount.V1}/5 kartų
+                        </div>
+                        <div class="style-item itikinimo">
+                            <strong>Įtikinimo (S2)</strong><br>
+                            Panaudota: ${styleCount.V2}/5 kartų
+                        </div>
+                        <div class="style-item dalyvavimo">
+                            <strong>Dalyvavimo (S3)</strong><br>
+                            Panaudota: ${styleCount.V3}/5 kartų
+                        </div>
+                        <div class="style-item delegavimo">
+                            <strong>Delegavimo (S4)</strong><br>
+                            Panaudota: ${styleCount.V4}/5 kartų
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">💡 Rekomendacijos</div>
+                    <div class="recommendations">
+                        ${generateRecommendations(effScore, flexScore, styleCount)}
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ Spausdinti / Išsaugoti PDF</button>
+                    <button class="btn btn-secondary" onclick="resetTest()">🔄 Pradėti iš naujo</button>
+                </div>
+            `;
+        }
+
+        function generateRecommendations(effScore, flexScore, styleCount) {
+            let recs = '<h3>Pagrindinės išvados:</h3><ul>';
+            
+            // Effectiveness recommendations
+            if (effScore < 35) {
+                recs += '<li><strong>Efektyvumas žemas.</strong> Rekomenduojama giliau susipažinti su situacinio vadovavimo modeliu. Atkreipkite dėmesį į darbuotojų kompetencijos ir motyvacijos lygių atpažinimą.</li>';
+            } else if (effScore < 55) {
+                recs += '<li><strong>Efektyvumas vidutinis.</strong> Jūs suprantate pagrindinius principus, bet dar reikia praktikos. Analizuokite savo sprendimus ir jų rezultatus.</li>';
+            } else if (effScore < 70) {
+                recs += '<li><strong>Efektyvumas geras.</strong> Jūs gerai atpažįstate situacijas ir renkate tinkamus vadovavimo stilius. Toliau tobulinkitės!</li>';
+            } else {
+                recs += '<li><strong>Efektyvumas puikus!</strong> Jūs puikiai valdote situacinį vadovavimą ir gebate pritaikyti tinkamus stilius.</li>';
+            }
+            
+            // Flexibility recommendations
+            if (flexScore === 0) {
+                recs += '<li><strong>Tobulas stilių balansas!</strong> Jūs naudojate visus 4 vadovavimo stilius vienodai dažnai.</li>';
+            } else if (flexScore <= 4) {
+                recs += '<li><strong>Lankstumas puikus.</strong> Jūs gerai balansuojate tarp skirtingų vadovavimo stilių.</li>';
+                
+                // Find underused styles
+                const underused = [];
+                if (styleCount.V1 < 5) underused.push('Nukreipimo (S1)');
+                if (styleCount.V2 < 5) underused.push('Įtikinimo (S2)');
+                if (styleCount.V3 < 5) underused.push('Dalyvavimo (S3)');
+                if (styleCount.V4 < 5) underused.push('Delegavimo (S4)');
+                
+                if (underused.length > 0) {
+                    recs += `<li>Retai naudojami stiliai: <strong>${underused.join(', ')}</strong>. Stenkitės juos dažniau pritaikyti tinkamose situacijose.</li>`;
+                }
+            } else if (flexScore <= 8) {
+                recs += '<li><strong>Lankstumas vidutinis.</strong> Pastebimas vieno ar dviejų stilių dominacija. Stenkitės plačiau naudoti visus 4 stilius.</li>';
+                
+                // Find most and least used styles
+                const max = Math.max(styleCount.V1, styleCount.V2, styleCount.V3, styleCount.V4);
+                const min = Math.min(styleCount.V1, styleCount.V2, styleCount.V3, styleCount.V4);
+                
+                const overused = [];
+                const underused = [];
+                
+                if (styleCount.V1 === max && max > 6) overused.push('Nukreipimo (S1)');
+                if (styleCount.V2 === max && max > 6) overused.push('Įtikinimo (S2)');
+                if (styleCount.V3 === max && max > 6) overused.push('Dalyvavimo (S3)');
+                if (styleCount.V4 === max && max > 6) overused.push('Delegavimo (S4)');
+                
+                if (styleCount.V1 === min && min < 4) underused.push('Nukreipimo (S1)');
+                if (styleCount.V2 === min && min < 4) underused.push('Įtikinimo (S2)');
+                if (styleCount.V3 === min && min < 4) underused.push('Dalyvavimo (S3)');
+                if (styleCount.V4 === min && min < 4) underused.push('Delegavimo (S4)');
+                
+                if (overused.length > 0) {
+                    recs += `<li>Per dažnai naudojami: <strong>${overused.join(', ')}</strong>.</li>`;
+                }
+                if (underused.length > 0) {
+                    recs += `<li>Per retai naudojami: <strong>${underused.join(', ')}</strong>.</li>`;
+                }
+            } else {
+                recs += '<li><strong>Lankstumas žemas.</strong> Pastebima aiški fiksacija į vieną ar du stilius. Svarbu išmokti naudoti visus 4 stilius priklausomai nuo situacijos.</li>';
+            }
+            
+            recs += '</ul>';
+            
+            recs += '<h3>Vadovavimo stilių priminimai:</h3><ul>';
+            recs += '<li><strong>S1 - Nukreipimo:</strong> Naudokite kai darbuotojas neturi nei kompetencijos, nei motyvacijos. Aiškūs nurodymai ir griežta kontrolė.</li>';
+            recs += '<li><strong>S2 - Įtikinimo:</strong> Naudokite kai darbuotojas motyvuotas, bet neturi kompetencijos. Nurodymai + paaiškinimas + įtraukimas.</li>';
+            recs += '<li><strong>S3 - Dalyvavimo:</strong> Naudokite kai darbuotojas kompetentingas, bet trūksta motyvacijos. Palaikymas, klausymasis, bendras sprendimas.</li>';
+            recs += '<li><strong>S4 - Delegavimo:</strong> Naudokite kai darbuotojas ir kompetentingas IR motyvuotas. Autonomija, minimalus įsikišimas.</li>';
+            recs += '</ul>';
+            
+            return recs;
+        }
+
+        function resetTest() {
+            document.getElementById('test-content').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize
+        renderQuestions();
+    </script>
+</body>
+</html>px;">
+                            <div style="font-size: 24px; font-weight: bold; color: #dc3545;">${effectiveness.LB}</div>
+                            <div style="font-size: 12px; color: #666;">Labai blogai</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: #fff; border-radius: 5px;">
+                            <div style="font-size: 24px; font-weight: bold; color: #ffc107;">${effectiveness.B}</div>
+                            <div style="font-size: 12px; color: #666;">Blogai</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: #fff; border-radius: 5
