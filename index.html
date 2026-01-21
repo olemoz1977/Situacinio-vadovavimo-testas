@@ -201,48 +201,207 @@
 
 <script>
     const questions = [
-        {
-            id: 1,
-            text: "Skyriuje dirba naujas darbuotojas. Jis labai entuziastingas, bet neturi patirties.",
-            options: [
-                { text: "Tiksliai nurodyti užduotis ir griežtai kontroliuoti eigą.", style: "S1 Nukreipimo", weight: 4 },
-                { text: "Padrąsinti ir paaiškinti užduoties prasmę, duodant gaires.", style: "S2 Įtikinimo", weight: 2 },
-                { text: "Leisti jam pačiam nuspręsti, kaip atlikti darbą.", style: "S4 Delegavimo", weight: 0 },
-                { text: "Paklausti jo nuomonės, kaip jis norėtų dirbti.", style: "S3 Dalyvavimo", weight: 1 }
-            ]
-        },
-        {
-            id: 2,
-            text: "Patyręs darbuotojas gavo naują, jam nepažįstamą projektą. Jis jaučiasi šiek tiek neužtikrintas.",
-            options: [
-                { text: "Suteikti jam visišką laisvę, nes jis visada susitvarko.", style: "S4 Delegavimo", weight: 1 },
-                { text: "Detaliai paaiškinti naują sritį ir motyvuoti imtis iššūkio.", style: "S2 Įtikinimo", weight: 4 },
-                { text: "Nurodyti kiekvieną žingsnį, kurį jis turi atlikti.", style: "S1 Nukreipimo", weight: 2 },
-                { text: "Kartu aptarti projektą ir palaikyti jį emociškai.", style: "S3 Dalyvavimo", weight: 3 }
-            ]
-        },
-        {
-            id: 3,
-            text: "Grupė specialistų dirba puikiai, tačiau kyla konfliktų dėl vidinių taisyklių.",
-            options: [
-                { text: "Įsikišti ir nustatyti griežtas naujas taisykles.", style: "S1 Nukreipimo", weight: 1 },
-                { text: "Pakviesti grupę kartu rasti sprendimą konfliktui spręsti.", style: "S3 Dalyvavimo", weight: 4 },
-                { text: "Tikėtis, kad jie patys išspręs savo vidines bėdas.", style: "S4 Delegavimo", weight: 2 },
-                { text: "Pabrėžti komandinio darbo naudą ir pasiūlyti savo sprendimą.", style: "S2 Įtikinimo", weight: 3 }
-            ]
-        },
-        {
-            id: 4,
-            text: "Darbuotojas, kuris visada dirbo puikiai, pastaruoju metu pradėjo vėluoti su terminais ir atrodo pavargęs.",
-            options: [
-                { text: "Priminti jam apie darbo sutarties įsipareigojimus.", style: "S1 Nukreipimo", weight: 0 },
-                { text: "Nuoširdžiai pasikalbėti, išklausyti ir bandyti kartu rasti priežastis.", style: "S3 Dalyvavimo", weight: 4 },
-                { text: "Sumažinti jam krūvį nieko neklausiant.", style: "S4 Delegavimo", weight: 1 },
-                { text: "Motyvuoti jį sakant, koks jis svarbus įmonei.", style: "S2 Įtikinimo", weight: 2 }
-            ]
-        },
-        // ... (Supaprastinimo dėlei pridėtos 4 bazinės situacijos, jas galima išplėsti iki 20 pagal tą pačią logiką)
-    ];
+    {
+        id: 1,
+        text: "Jūsų skyriuje dirba naujas darbuotojas. Jis labai entuziastingas, bet neturi reikiamos patirties užduočiai atlikti.",
+        options: [
+            { text: "Tiksliai nurodyti, ką ir kaip daryti, bei atidžiai stebėti progresą.", style: "S1 Nukreipimo", weight: 4 },
+            { text: "Paaiškinti užduoties svarbą, padrąsinti ir suteikti instrukcijas.", style: "S2 Įtikinimo", weight: 2 },
+            { text: "Leisti jam pačiam rasti būdus užduočiai atlikti.", style: "S4 Delegavimo", weight: 0 },
+            { text: "Aptarti, kaip jis norėtų dirbti, ir palaikyti jo entuziazmą.", style: "S3 Dalyvavimo", weight: 1 }
+        ]
+    },
+    {
+        id: 2,
+        text: "Patyręs darbuotojas gavo naują, jam nepažįstamą projektą. Jis jaučiasi šiek tiek neužtikrintas dėl savo gebėjimų šioje srityje.",
+        options: [
+            { text: "Paskirti užduotį ir nesikišti, nes jis yra profesionalas.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Detaliai paaiškinti naują sritį, nukreipti ir kartu motyvuoti.", style: "S2 Įtikinimo", weight: 4 },
+            { text: "Griežtai kontroliuoti kiekvieną jo žingsnį.", style: "S1 Nukreipimo", weight: 2 },
+            { text: "Išklausyti jo būgštavimus ir pasiūlyti paramą, bet sprendimus palikti jam.", style: "S3 Dalyvavimo", weight: 3 }
+        ]
+    },
+    {
+        id: 3,
+        text: "Grupė specialistų dirba puikiai, tačiau pastaruoju metu kyla ginčų dėl vidinių darbo taisyklių.",
+        options: [
+            { text: "Nustatyti naujas taisykles ir reikalauti jų laikytis.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Leisti grupei pačiai išspręsti savo konfliktus.", style: "S4 Delegavimo", weight: 2 },
+            { text: "Sušaukti susirinkimą ir kartu su komanda parengti taisykles.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Pabrėžti taisyklių naudą ir pasiūlyti savo viziją.", style: "S2 Įtikinimo", weight: 3 }
+        ]
+    },
+    {
+        id: 4,
+        text: "Darbuotojas, kuris visada dirbo puikiai, pastaruoju metu pradėjo vėluoti su terminais ir atrodo demotyvuotas.",
+        options: [
+            { text: "Priminti jam apie darbo drausmę ir terminus.", style: "S1 Nukreipimo", weight: 0 },
+            { text: "Atvirai pasikalbėti, išklausyti ir kartu ieškoti sprendimų.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Suteikti jam daugiau laisvės ir tikėtis, kad jis susitvarkys.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Padrąsinti jį ir aiškiau apibrėžti tikslus.", style: "S2 Įtikinimo", weight: 2 }
+        ]
+    },
+    {
+        id: 5,
+        text: "Jūsų komanda sėkmingai užbaigė etapą. Dabar laukia kitas, labai panašus etapas, kuriame jie turi visus įgūdžius.",
+        options: [
+            { text: "Leisti komandai savarankiškai tęsti darbą.", style: "S4 Delegavimo", weight: 4 },
+            { text: "Vėl detaliai paaiškinti instrukcijas.", style: "S1 Nukreipimo", weight: 0 },
+            { text: "Palaikyti ryšį ir pasidžiaugti sėkme kartu su jais.", style: "S3 Dalyvavimo", weight: 3 },
+            { text: "Motyvuoti juos dar didesniems iššūkiams.", style: "S2 Įtikinimo", weight: 2 }
+        ]
+    },
+    {
+        id: 6,
+        text: "Naujai suformuota komanda dar nežino savo tikslų, nors nariai yra labai kompetentingi atskirai.",
+        options: [
+            { text: "Leisti jiems patiems susiorganizuoti procesą.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Tiksliai įvardyti tikslus ir nustatyti darbo tvarką.", style: "S1 Nukreipimo", weight: 4 },
+            { text: "Pasiūlyti viziją ir paprašyti jų nuomonės dėl jos.", style: "S2 Įtikinimo", weight: 3 },
+            { text: "Organizuoti diskusiją, kad jie patys susikurtų tikslus.", style: "S3 Dalyvavimo", weight: 2 }
+        ]
+    },
+    {
+        id: 7,
+        text: "Pastebite, kad jūsų asistentas atlieka užduotis gerai, bet visada laukia jūsų patvirtinimo prieš baigdamas.",
+        options: [
+            { text: "Nurodyti jam būti drąsesniam.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Aptarti, kodėl jis jaučia abejonę, ir paskatinti savarankiškumą.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Pradėti deleguoti užduotis be galutinio patvirtinimo poreikio.", style: "S4 Delegavimo", weight: 3 },
+            { text: "Pagyvinti jo pasitikėjimą aiškinant, ką jis daro teisingai.", style: "S2 Įtikinimo", weight: 2 }
+        ]
+    },
+    {
+        id: 8,
+        text: "Dėl organizacijos pokyčių komandos moralė krito, nors darbas vis dar atliekamas laiku.",
+        options: [
+            { text: "Sutelkti dėmesį į tarpusavio santykius ir išklausyti darbuotojų baimes.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Paskelbti, kad rezultatai yra prioritetas ir pokyčiai neišvengiami.", style: "S1 Nukreipimo", weight: 0 },
+            { text: "Paaiškinti pokyčių naudą ir bandyti įkvėpti komandą.", style: "S2 Įtikinimo", weight: 3 },
+            { text: "Nesikišti, kol darbas yra atliekamas.", style: "S4 Delegavimo", weight: 1 }
+        ]
+    },
+    {
+        id: 9,
+        text: "Komandos narys nori imtis papildomos atsakomybės, bet jam trūksta specifinių techninių žinių.",
+        options: [
+            { text: "Leisti jam bandyti ir mokytis iš savo klaidų.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Apmokyti jį ir kartu aptarti, kaip jam sekasi taikyti žinias.", style: "S2 Įtikinimo", weight: 4 },
+            { text: "Duoti jam instrukcijas ir kontroliuoti rezultatą.", style: "S1 Nukreipimo", weight: 2 },
+            { text: "Pasiūlyti jam mentorių iš kolegų tarpo ir palaikyti emociškai.", style: "S3 Dalyvavimo", weight: 3 }
+        ]
+    },
+    {
+        id: 10,
+        text: "Patyręs darbuotojas padarė rimtą klaidą. Jis dėl to labai išgyvena.",
+        options: [
+            { text: "Nurodyti jam, kaip ištaisyti klaidą, ir stebėti procesą.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Pasikalbėti, nuraminti ir leisti jam pačiam rasti sprendimą.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Pasakyti, kad klaidų pasitaiko visiems, ir palikti jį dirbti.", style: "S4 Delegavimo", weight: 2 },
+            { text: "Išanalizuoti klaidą kartu ir paaiškinti, kaip jos išvengti ateityje.", style: "S2 Įtikinimo", weight: 3 }
+        ]
+    },
+    {
+        id: 11,
+        text: "Jums reikia paskirti žmogų skubiai užduočiai. Turite darbuotoją, kuris yra kompetentingas, bet linkęs abejoti savimi.",
+        options: [
+            { text: "Nurodyti jam tiksliai, ką daryti, kad jis nesijaudintų.", style: "S1 Nukreipimo", weight: 2 },
+            { text: "Paskirti užduotį ir pasakyti, kad pasitikite juo 100%.", style: "S4 Delegavimo", weight: 2 },
+            { text: "Kartu aptarti užduotį ir padrąsinti jį viso proceso metu.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Pabrėžti užduoties svarbą ir duoti aiškias gaires.", style: "S2 Įtikinimo", weight: 3 }
+        ]
+    },
+    {
+        id: 12,
+        text: "Komanda pasiekė puikių rezultatų. Jie tapo labai savarankiški ir iniciatyvūs.",
+        options: [
+            { text: "Sumažinti savo kontrolę ir leisti jiems veikti patiems.", style: "S4 Delegavimo", weight: 4 },
+            { text: "Toliau dalyvauti visuose susirinkimuose ir prižiūrėti eigą.", style: "S3 Dalyvavimo", weight: 2 },
+            { text: "Nustatyti naujus, dar griežtesnius tikslus.", style: "S1 Nukreipimo", weight: 0 },
+            { text: "Pagyvinti jų sėkmę ir siūlyti naujas idėjas.", style: "S2 Įtikinimo", weight: 1 }
+        ]
+    },
+    {
+        id: 13,
+        text: "Pastebite, kad naujas projektas stringa, nes darbuotojai nesutaria dėl atsakomybių pasiskirstymo.",
+        options: [
+            { text: "Leisti jiems patiems išsiaiškinti vaidmenis.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Sušaukti susirinkimą ir nurodyti, kas už ką atsakingas.", style: "S1 Nukreipimo", weight: 4 },
+            { text: "Išklausyti visų nuomones ir padėti jiems susitarti.", style: "S3 Dalyvavimo", weight: 3 },
+            { text: "Paaiškinti atsakomybių svarbą ir pasiūlyti savo planą.", style: "S2 Įtikinimo", weight: 2 }
+        ]
+    },
+    {
+        id: 14,
+        text: "Darbuotojas vėl ir vėl klausia tų pačių dalykų apie paprastą užduotį.",
+        options: [
+            { text: "Dar kartą kantriai paaiškinti ir paprašyti užsirašyti instrukciją.", style: "S1 Nukreipimo", weight: 4 },
+            { text: "Paklausti, kas jam trukdo suprasti, ir palaikyti jį.", style: "S3 Dalyvavimo", weight: 2 },
+            { text: "Nusiųsti jį pas kolegą, kad šis jį apmokytų.", style: "S2 Įtikinimo", weight: 3 },
+            { text: "Pasakyti, kad jis turėtų būti savarankiškesnis.", style: "S4 Delegavimo", weight: 0 }
+        ]
+    },
+    {
+        id: 15,
+        text: "Jūsų geriausias specialistas pradėjo rodyti nepasitenkinimą dėl per didelio jūsų dėmesio jo darbui.",
+        options: [
+            { text: "Paaiškinti, kad kontrolė reikalinga bendram tikslui.", style: "S2 Įtikinimo", weight: 1 },
+            { text: "Atsitraukti ir suteikti jam daugiau autonomijos.", style: "S4 Delegavimo", weight: 4 },
+            { text: "Aptarti su juo, kokio lygio palaikymo jam iš tikrųjų reikia.", style: "S3 Dalyvavimo", weight: 3 },
+            { text: "Griežtai nustatyti atsiskaitymo tvarką.", style: "S1 Nukreipimo", weight: 0 }
+        ]
+    },
+    {
+        id: 16,
+        text: "Komanda susidūrė su nenumatyta kliūtimi. Jie jaučiasi pasimetę ir laukia jūsų sprendimo.",
+        options: [
+            { text: "Priimti sprendimą ir duoti komandai nurodymus, kaip veikti.", style: "S1 Nukreipimo", weight: 4 },
+            { text: "Paklausti komandos nuomonės ir kartu rasti išeitį.", style: "S3 Dalyvavimo", weight: 3 },
+            { text: "Paaiškinti situaciją ir motyvuoti juos rasti sprendimą patiems.", style: "S2 Įtikinimo", weight: 3 },
+            { text: "Palikti juos rasti išeitį, nes jie yra savo srities specialistai.", style: "S4 Delegavimo", weight: 1 }
+        ]
+    },
+    {
+        id: 17,
+        text: "Jaunas darbuotojas atliko užduotį vidutiniškai, bet labai stengėsi.",
+        options: [
+            { text: "Pagyvinti už pastangas ir parodyti, kaip kitą kartą padaryti geriau.", style: "S2 Įtikinimo", weight: 4 },
+            { text: "Tiksliai nurodyti klaidas ir liepti pataisyti.", style: "S1 Nukreipimo", weight: 2 },
+            { text: "Aptarti su juo, kaip jis pats vertina rezultatą.", style: "S3 Dalyvavimo", weight: 3 },
+            { text: "Priimti darbą toks, koks yra, kad nenumotyvuotumėte.", style: "S4 Delegavimo", weight: 1 }
+        ]
+    },
+    {
+        id: 18,
+        text: "Darbuotojas yra ekspertas, bet jis nemėgsta prisiimti atsakomybės už sprendimus.",
+        options: [
+            { text: "Versti jį priimti sprendimus.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Padrąsinti jį, aptarti jo abejones ir būti šalia priimant sprendimą.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Paaiškinti atsakomybės naudą jo karjerai.", style: "S2 Įtikinimo", weight: 2 },
+            { text: "Deleguoti jam projektą ir pasakyti, kad pasitikite jo galutiniu sprendimu.", style: "S4 Delegavimo", weight: 3 }
+        ]
+    },
+    {
+        id: 19,
+        text: "Įdiegiama nauja technologija. Visi darbuotojai yra patyrę, bet skeptiški naujovės atžvilgiu.",
+        options: [
+            { text: "Nurodyti visiems privalomai naudotis nauja sistema.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Pristatyti sistemos naudą, išklausyti jų abejones ir įtraukti į mokymus.", style: "S2 Įtikinimo", weight: 4 },
+            { text: "Leisti jiems patiems nuspręsti, kada pereiti prie naujos sistemos.", style: "S4 Delegavimo", weight: 1 },
+            { text: "Organizuoti diskusiją apie tai, kaip ši sistema pakeis jų kasdienybę.", style: "S3 Dalyvavimo", weight: 3 }
+        ]
+    },
+    {
+        id: 20,
+        text: "Pastebite, kad komanda dirba efektyviai, bet trūksta kūrybiškumo ir naujų idėjų.",
+        options: [
+            { text: "Nurodyti kiekvienam pateikti po vieną naują idėją per savaitę.", style: "S1 Nukreipimo", weight: 1 },
+            { text: "Sukurti saugią aplinką idėjų generavimui ir dalyvauti procese kaip lygiaverčiam nariui.", style: "S3 Dalyvavimo", weight: 4 },
+            { text: "Paskatinti juos ieškoti naujovių ir suteikti tam laiko bei resursų.", style: "S4 Delegavimo", weight: 3 },
+            { text: "Uždegti juos vizija apie inovacijų svarbą.", style: "S2 Įtikinimo", weight: 2 }
+        ]
+    }
+];
 
     // Sugeneruojame klausimus
     function renderQuestions() {
