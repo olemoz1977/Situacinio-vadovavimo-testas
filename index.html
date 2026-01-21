@@ -3,202 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Situacinio Vadovavimo Diagnostika (Eksperto Versija)</title>
+    <title>Situacinio Vadovavimo Ekspertinė Sistema</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #67b26f;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
             --danger: #e74c3c;
-            --dark: #2c3e50;
-            --light: #f4f7f6;
+            --light: #ecf0f1;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #eef2f3;
-            color: var(--dark);
-            line-height: 1.6;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f7f6;
+            color: var(--primary);
             padding: 20px;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .header {
-            text-align: center;
-            border-bottom: 2px solid var(--light);
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-        }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid var(--accent); padding-bottom: 20px; }
 
         .question-card {
-            margin-bottom: 30px;
+            background: #fff;
+            border: 1px solid #ddd;
             padding: 20px;
-            border: 1px solid #eee;
+            margin-bottom: 20px;
             border-radius: 8px;
             transition: 0.3s;
         }
 
-        .question-card:hover {
-            border-color: var(--primary);
-            background: #fafafa;
-        }
-
-        .question-text {
-            font-weight: 600;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            display: block;
-        }
+        .question-card.active { border-left: 5px solid var(--accent); background: #f9f9f9; }
 
         .options label {
             display: block;
-            padding: 10px 15px;
+            padding: 12px;
             margin: 8px 0;
-            background: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid #eee;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .options input[type="radio"] {
-            margin-right: 10px;
-        }
+        .options label:hover { background: #eef2f3; }
+        
+        input[type="radio"] { margin-right: 10px; }
 
-        .options label:hover {
-            background: #f0f7ff;
-            border-color: var(--primary);
-        }
-
-        .options input[type="radio"]:checked + span {
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .btn-submit {
-            display: block;
+        .btn {
             width: 100%;
             padding: 15px;
-            background: var(--primary);
-            color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             cursor: pointer;
-            margin-top: 20px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        .btn-submit:hover {
-            background: #357abd;
-        }
+        .btn-primary { background: var(--accent); color: white; margin-top: 20px; }
+        .btn-pdf { background: var(--success); color: white; margin-top: 20px; display: none; }
 
-        /* Rezultatų stiliai */
-        #results {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
+        #appendix-section, #results-section { display: none; }
 
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--primary);
+        .score-box { text-align: center; padding: 20px; background: var(--light); border-radius: 10px; margin-bottom: 20px; }
+        
+        .badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 0 auto 20px;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .stat-card {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-val {
-            display: block;
-            font-size: 1.4em;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .critical-warning {
-            background: #fff5f5;
-            border-left: 5px solid var(--danger);
-            padding: 15px;
-            margin: 20px 0;
-            color: #c53030;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media print {
+            .btn, .header p { display: none; }
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="test-content">
+    <div id="main-test-section">
         <div class="header">
             <h1>Situacinio Vadovavimo Diagnostika</h1>
-            <p>Atsakykite į 20 situacijų ir sužinokite savo efektyvumą bei lankstumą.</p>
+            <p>I pakopa: 20 bazinių situacijų jūsų stiliui nustatyti</p>
         </div>
-        <div id="questions-container"></div>
-        <button class="btn-submit" onclick="calculateResults()">Pateikti vertinimui</button>
+        <div id="main-questions"></div>
+        <button class="btn btn-primary" onclick="processMainTest()">Tęsti į II pakopą (Appendix)</button>
     </div>
 
-    <div id="results">
+    <div id="appendix-section">
         <div class="header">
-            <h2>Jūsų Rezultatai</h2>
+            <h1>Appendix: Streso Testas</h1>
+            <p>II pakopa: Patikriname, ar jūsų tendencija yra lanksti, ar ribota.</p>
         </div>
-        <div class="score-circle" id="efficiency-score">0%</div>
-        <p style="text-align: center; font-weight: bold;">Bendras vadovavimo efektyvumas</p>
+        <div id="appendix-questions"></div>
+        <button class="btn btn-primary" onclick="processFinalResults()">Gauti galutinę analizę</button>
+    </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-val" id="flexibility-label">-</span>
-                Lankstumo indeksas
-            </div>
-            <div class="stat-card">
-                <span class="stat-val" id="mistakes-count">0</span>
-                Kritinės klaidos
-            </div>
+    <div id="results-section">
+        <div class="header">
+            <h1>Galutinė Vadovavimo Ataskaita</h1>
         </div>
-
-        <div id="critical-alert" class="critical-warning" style="display: none;">
-            <strong>⚠️ Dėmesio:</strong> Jūsų rezultatuose pastebimos „kritinės klaidos“ (0 balų). Tai reiškia, kad pasirinkote stilių, kuris tokioje situacijoje gali demotyvuoti darbuotoją arba sužlugdyti užduotį.
-        </div>
-
-        <div id="style-distribution" style="margin-top: 30px;">
-            <h3>Naudotų stilių profilis:</h3>
-            <ul id="style-list"></ul>
-        </div>
-
-        <button class="btn-submit" style="background: var(--dark);" onclick="location.reload()">Atlikti testą iš naujo</button>
+        <div id="final-content"></div>
+        <button class="btn btn-pdf" id="pdf-btn" onclick="window.print()">Išsaugoti PDF / Spausdinti</button>
+        <button class="btn btn-primary" style="background: #95a5a6;" onclick="location.reload()">Atlikti testą iš naujo</button>
     </div>
 </div>
-
-
-
 <script>
     const questions = [
     {
@@ -403,74 +321,112 @@
     }
 ];
 
-    // Sugeneruojame klausimus
-    function renderQuestions() {
-        const container = document.getElementById('questions-container');
-        container.innerHTML = questions.map((q, qIndex) => `
-            <div class="question-card" id="card-${q.id}">
-                <span class="question-text">${qIndex + 1}. ${q.text}</span>
+// APPENDIX: 3 "Streso" klausimai
+    const appendixQuestions = [
+        { id: 'a1', text: "KRIZĖ: Serveriai lūžta, duomenys dingsta. Naujokas IT specialistas sustingęs laukia.", options: [
+            { text: "Klausti jo nuomonės dėl sprendimo.", s: "S3", w: 0 },
+            { text: "Įsakyti konkrečius žingsnius nedelsiant.", s: "S1", w: 4 },
+            { text: "Padrąsinti, kad jis viską moka.", s: "S4", w: 1 }
+        ]},
+        { id: 'a2', text: "EKSPERTAS: Jūsų geriausias darbuotojas dvejus metus viršija tikslus. Pavedate jam naują strateginį projektą.", options: [
+            { text: "Pasakyti: 'Projektas tavo, sėkmės, informuok jei reikės ko nors'.", s: "S4", w: 4 },
+            { text: "Aptarti kartu kiekvieną plano detalę.", s: "S3", w: 1 },
+            { text: "Nustatyti griežtus tarpinius atsiskaitymus.", s: "S1", w: 0 }
+        ]},
+        { id: 'a3', text: "SAUGUMAS: Komanda ignoruoja saugumo taisykles dėl greičio. Tai pavojinga.", options: [
+            { text: "Diskutuoti, kaip padaryti taisykles patogesnes.", s: "S3", w: 1 },
+            { text: "Griežtai uždrausti pažeidimus ir įvesti nuobaudas.", s: "S1", w: 4 },
+            { text: "Tikėtis, kad jie patys susipras.", s: "S4", w: 0 }
+        ]}
+    ];
+
+    let mainResults = {};
+    let appendixResults = {};
+
+    function renderQuestions(data, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = data.map((q, idx) => `
+            <div class="question-card">
+                <strong>${idx + 1}. ${q.text}</strong>
                 <div class="options">
-                    ${q.options.map((opt, optIndex) => `
-                        <label>
-                            <input type="radio" name="q${q.id}" value="${optIndex}">
-                            <span>${opt.text}</span>
-                        </label>
+                    ${q.options.map((opt, i) => `
+                        <label><input type="radio" name="${prefix}${q.id}" value="${i}"> ${opt.text}</label>
                     `).join('')}
                 </div>
             </div>
         `).join('');
     }
 
-    function calculateResults() {
-        let totalScore = 0;
-        let mistakes = 0;
-        const styleCounts = {};
-        let answeredCount = 0;
-
-        questions.forEach(q => {
-            const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
-            if (selected) {
-                answeredCount++;
-                const opt = q.options[selected.value];
-                totalScore += opt.weight;
-                if (opt.weight === 0) mistakes++;
-                styleCounts[opt.style] = (styleCounts[opt.style] || 0) + 1;
-            }
+    function processMainTest() {
+        const inputs = document.querySelectorAll('#main-questions input:checked');
+        if (inputs.length < mainQuestions.length) { alert("Atsakykite į visus klausimus!"); return; }
+        
+        mainQuestions.forEach(q => {
+            const idx = document.querySelector(`input[name="m${q.id}"]:checked`).value;
+            const opt = q.options[idx];
+            mainResults[opt.s] = (mainResults[opt.s] || 0) + 1;
         });
 
-        if (answeredCount < questions.length) {
-            alert("Prašome atsakyti į visus klausimus!");
-            return;
-        }
-
-        // Efektyvumas (Max balai = klausimų skaičius * 4)
-        const efficiency = Math.round((totalScore / (questions.length * 4)) * 100);
-        
-        // Lankstumas: skaičiuojame kiek skirtingų stilių naudota bent kartą
-        const distinctStyles = Object.keys(styleCounts).length;
-        let flexLabel = "Žemas";
-        if (distinctStyles >= 4) flexLabel = "Aukštas";
-        else if (distinctStyles === 3) flexLabel = "Vidutinis";
-
-        // Rodyti rezultatus
-        document.getElementById('test-content').style.display = 'none';
-        document.getElementById('results').style.display = 'block';
-        
-        document.getElementById('efficiency-score').innerText = efficiency + "%";
-        document.getElementById('flexibility-label').innerText = flexLabel;
-        document.getElementById('mistakes-count').innerText = mistakes;
-        
-        if (mistakes > 0) document.getElementById('critical-alert').style.display = 'block';
-
-        const styleList = document.getElementById('style-list');
-        styleList.innerHTML = Object.entries(styleCounts)
-            .map(([name, count]) => `<li><strong>${name}:</strong> panaudota ${count} kartus(-ų)</li>`)
-            .join('');
-
-        window.scrollTo(0, 0);
+        document.getElementById('main-test-section').style.display = 'none';
+        document.getElementById('appendix-section').style.display = 'block';
+        renderQuestions(appendixQuestions, 'appendix-questions', 'a');
+        window.scrollTo(0,0);
     }
 
-    renderQuestions();
+    function processFinalResults() {
+        const inputs = document.querySelectorAll('#appendix-questions input:checked');
+        if (inputs.length < appendixQuestions.length) { alert("Atsakykite į visus klausimus!"); return; }
+
+        let appendixScore = 0;
+        appendixQuestions.forEach(q => {
+            const idx = document.querySelector(`input[name="a${q.id}"]:checked`).value;
+            appendixScore += q.options[idx].w;
+        });
+
+        showFinalReport(appendixScore);
+    }
+
+    function showFinalReport(appScore) {
+        document.getElementById('appendix-section').style.display = 'none';
+        document.getElementById('results-section').style.display = 'block';
+        document.getElementById('pdf-btn').style.display = 'block';
+
+        const domStyle = Object.keys(mainResults).reduce((a, b) => mainResults[a] > mainResults[b] ? a : b);
+        const isFlexible = appScore >= 8;
+
+        let analysis = `
+            <div class="score-box">
+                <h2>Vadovavimo Integruotas Vertinimas</h2>
+                <p>Dominuojantis stilius: <strong>${domStyle}</strong></p>
+                <p>Lankstumo patikra: <span class="badge" style="background:${isFlexible ? '#27ae60':'#e74c3c'}">
+                    ${isFlexible ? 'PATVIRTINTA (Lankstus)' : 'RIBOTA TENDENCIJA'}
+                </span></p>
+            </div>
+            
+            <h3>Interpretacija:</h3>
+            <p>${generateInterpretation(domStyle, isFlexible)}</p>
+            
+            <div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px;">
+                <strong>Rekomendacijos:</strong>
+                <ul>
+                    ${isFlexible ? 
+                        '<li>Išlaikykite šį budrumą. Jūsų gebėjimas perjungti S1 ir S4 režimus krizės ar visiško pasitikėjimo metu yra jūsų stiprybė.</li>' : 
+                        '<li>Dėmesio: Jūsų tendencija į ' + domStyle + ' yra per stipri. Mokykitės griežtumo (S1) krizėse ir visiško atsitraukimo (S4) su ekspertais.</li>'}
+                    <li>S3 (Dalyvavimas) yra puikus kasdienybei, bet netinkamas gaisrams gesinti.</li>
+                </ul>
+            </div>
+        `;
+
+        document.getElementById('final-content').innerHTML = analysis;
+    }
+
+    function generateInterpretation(style, flexible) {
+        if (style === 'S3' && flexible) return "Jūs esate 'Empatiškas Profesionalas'. Nors kasdienybėje renkatės diskusiją, streso testas parodė, kad prireikus gebate būti kietas lyderis.";
+        if (style === 'S3' && !flexible) return "Jūs esate 'Demokratijos Įkaitas'. Linkstate tartis net ten, kur reikia greitų sprendimų ar visiško delegavimo. Tai didina jūsų nuovargį.";
+        return "Jūsų stilius yra subalansuotas, tačiau stebėkite savo reakcijas į ekstremalias situacijas.";
+    }
+
+    renderQuestions(mainQuestions, 'main-questions', 'm');
 </script>
 
 </body>
